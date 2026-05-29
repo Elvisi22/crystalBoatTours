@@ -1,35 +1,6 @@
-export interface PriceOption {
-  label: string;
-  price: number;
-}
+import { DESTINATIONS, TOURS } from './data/catalog';
 
-export interface Tour {
-  id: string;
-  slug: string;
-  name: string;
-  category: 'tour' | 'watersport';
-  price: number;
-  unit: string;
-  priceOptions?: PriceOption[];
-  pricingNote?: string;
-  quantityLabel: string;
-  image: string;
-  shortDescription: string;
-  description: string;
-  highlights: string[];
-  duration: string;
-  capacity: string;
-  bookable: boolean;
-}
-
-export interface Destination {
-  id: string;
-  slug: string;
-  name: string;
-  image: string;
-  tagline: string;
-  description: string;
-}
+export type { Destination, PriceOption, Tour } from './data/catalog';
 
 export interface CreateOrderResponse {
   bookingId: string;
@@ -49,13 +20,24 @@ const json = async (res: Response) => {
   return res.json();
 };
 
-export const api = {
-  getTours: (): Promise<Tour[]> => fetch('/api/tours').then(json),
-  getTour: (slug: string): Promise<Tour> => fetch(`/api/tours/${slug}`).then(json),
-  getDestinations: (): Promise<Destination[]> => fetch('/api/destinations').then(json),
-  getDestination: (slug: string): Promise<Destination> =>
-    fetch(`/api/destinations/${slug}`).then(json),
+const notFound = (what: string) => Promise.reject(new Error(`${what} not found`));
 
+export const api = {
+  // Read-only catalog is served from the bundled data so the site works on a
+  // static host (no backend required).
+  getTours: () => Promise.resolve(TOURS),
+  getTour: (slug: string) => {
+    const tour = TOURS.find((t) => t.slug === slug);
+    return tour ? Promise.resolve(tour) : notFound('Tour');
+  },
+  getDestinations: () => Promise.resolve(DESTINATIONS),
+  getDestination: (slug: string) => {
+    const dest = DESTINATIONS.find((d) => d.slug === slug);
+    return dest ? Promise.resolve(dest) : notFound('Destination');
+  },
+
+  // These need the backend. On a static deployment they reject and the UI
+  // falls back to "contact us" / direct messaging.
   createBookingOrder: (payload: Record<string, unknown>): Promise<CreateOrderResponse> =>
     fetch('/api/bookings/create-order', {
       method: 'POST',

@@ -1,8 +1,8 @@
 import { PayPalButtons, PayPalScriptProvider } from '@paypal/react-paypal-js';
 import { useMemo, useState } from 'react';
 import { api, type CreateOrderResponse, type Tour } from '../api';
-import { PAYPAL_CLIENT_ID, PAYPAL_CURRENCY } from '../config';
-import { CheckIcon } from './icons';
+import { PAYPAL_CLIENT_ID, PAYPAL_CURRENCY, SITE } from '../config';
+import { CheckIcon, PhoneIcon, WhatsAppIcon } from './icons';
 
 const TIMES = ['09:00', '10:00', '11:00', '12:00', '14:00', '15:00', '16:00', '17:00'];
 const today = new Date().toISOString().slice(0, 10);
@@ -25,6 +25,7 @@ export default function BookingWidget({ tour }: { tour: Tour }) {
   const [order, setOrder] = useState<CreateOrderResponse | null>(null);
   const [error, setError] = useState('');
   const [busy, setBusy] = useState(false);
+  const [unavailable, setUnavailable] = useState(false);
 
   const unitPrice = useMemo(() => {
     if (hasOptions) {
@@ -59,8 +60,9 @@ export default function BookingWidget({ tour }: { tour: Tour }) {
       });
       setOrder(res);
       setStep('pay');
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Could not start booking.');
+    } catch {
+      // No backend reachable (e.g. static deploy) — offer direct booking.
+      setUnavailable(true);
     } finally {
       setBusy(false);
     }
@@ -92,6 +94,29 @@ export default function BookingWidget({ tour }: { tour: Tour }) {
           We received your {order?.depositPercent ?? 20}% deposit and sent the details to our team.
           The remaining balance is paid on the day.
         </p>
+      </div>
+    );
+  }
+
+  if (unavailable) {
+    return (
+      <div className="rounded-3xl border border-slate-100 bg-white p-6 text-center shadow-lg sm:p-8">
+        <h3 className="font-display text-xl font-bold text-deep">Reserve your spot</h3>
+        <p className="mx-auto mt-2 max-w-sm text-sm text-slate-600">
+          Online payment is being set up. To book <strong>{tour.name}</strong>, message or call us
+          directly — we'll confirm your spot right away.
+        </p>
+        <div className="mt-6 flex flex-col gap-3">
+          <a href={SITE.whatsapp} target="_blank" rel="noreferrer" className="btn w-full bg-[#25D366] text-white hover:brightness-95">
+            <WhatsAppIcon className="h-5 w-5" /> Book on WhatsApp
+          </a>
+          <a href={SITE.phoneHref} className="btn-ghost w-full">
+            <PhoneIcon className="h-4 w-4" /> {SITE.phone}
+          </a>
+        </div>
+        <button onClick={() => setUnavailable(false)} className="mt-4 text-xs text-slate-400 hover:text-ocean-600">
+          ← Back
+        </button>
       </div>
     );
   }

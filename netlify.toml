@@ -1,0 +1,15 @@
+# Netlify build config for this monorepo.
+# Builds only the React frontend and publishes its static output.
+[build]
+  command = "npm install && npm run build -w frontend"
+  publish = "frontend/dist"
+
+[build.environment]
+  NODE_VERSION = "20"
+
+# SPA fallback: every route serves index.html so deep links like
+# /activities and /destinations/... don't 404.
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
