@@ -1,0 +1,58 @@
+@import 'tailwindcss';
+
+@theme {
+  --color-ocean-50: #eefaff;
+  --color-ocean-100: #d9f2ff;
+  --color-ocean-200: #bce9ff;
+  --color-ocean-300: #8eddff;
+  --color-ocean-400: #59c7ff;
+  --color-ocean-500: #33aaff;
+  --color-ocean-600: #1c8ae6;
+  --color-ocean-700: #1670b8;
+  --color-ocean-800: #185d94;
+  --color-ocean-900: #194f78;
+  --color-ocean-950: #133149;
+
+  --color-teal-sea: #0fb4b4;
+  --color-sand: #f4ead7;
+  --color-deep: #0a2540;
+
+  --font-display: 'Poppins', ui-sans-serif, system-ui, sans-serif;
+  --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+  body {
+    @apply bg-white text-slate-800 antialiased font-sans;
+  }
+  h1, h2, h3, h4 {
+    @apply font-display;
+  }
+}
+
+@layer components {
+  .container-page {
+    @apply mx-auto w-full max-w-7xl px-5 sm:px-8;
+  }
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-full px-6 py-3 text-sm font-semibold transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2;
+  }
+  .btn-primary {
+    @apply inline-flex items-center justify-center gap-2 rounded-full px-6 py-3 text-sm font-semibold transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 bg-ocean-600 text-white hover:bg-ocean-700 shadow-lg shadow-ocean-600/25 focus:ring-ocean-500;
+  }
+  .btn-accent {
+    @apply inline-flex items-center justify-center gap-2 rounded-full px-6 py-3 text-sm font-semibold transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 bg-teal-sea text-white hover:brightness-95 shadow-lg shadow-teal-sea/25 focus:ring-teal-sea;
+  }
+  .btn-ghost {
+    @apply inline-flex items-center justify-center gap-2 rounded-full px-6 py-3 text-sm font-semibold transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 border border-slate-200 bg-white text-slate-700 hover:border-ocean-300 hover:text-ocean-700;
+  }
+  .section {
+    @apply py-16 sm:py-24;
+  }
+  .eyebrow {
+    @apply text-sm font-semibold uppercase tracking-[0.18em] text-teal-sea;
+  }
+}
