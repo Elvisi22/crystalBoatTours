@@ -1,0 +1,58 @@
+# Render.com Blueprint — deploys the whole app as ONE web service.
+# NestJS serves the built React app + the /api endpoints from a single URL,
+# so the public site, booking, emails and the /admin panel all work together.
+#
+# Deploy: Render dashboard → New + → Blueprint → pick this repo. Then fill in
+# the env vars marked "sync: false" (your secrets) in the dashboard.
+services:
+  - type: web
+    name: crystal-boat-tours
+    runtime: node
+    plan: free
+    # --include=dev so Vite / Nest CLI / tsc (devDependencies) are available
+    # for the build even though Render sets NODE_ENV=production.
+    buildCommand: npm install --include=dev && npm run build
+    startCommand: npm start
+    healthCheckPath: /api/tours
+    envVars:
+      - key: NODE_VERSION
+        value: "20"
+      - key: DEPOSIT_PERCENT
+        value: "20"
+      # ── PayPal (enter real values in the dashboard) ──
+      - key: PAYPAL_ENV
+        value: sandbox
+      - key: PAYPAL_CURRENCY
+        value: EUR
+      - key: PAYPAL_CLIENT_ID
+        sync: false
+      - key: PAYPAL_CLIENT_SECRET
+        sync: false
+      # Must equal PAYPAL_CLIENT_ID — baked into the frontend at build time.
+      - key: VITE_PAYPAL_CLIENT_ID
+        sync: false
+      - key: VITE_PAYPAL_CURRENCY
+        value: EUR
+      # ── Booking emails ──
+      - key: BOOKING_NOTIFY_EMAIL
+        value: info@crystalboattours.com
+      - key: MAIL_FROM
+        value: Crystal Boat Tours <info@crystalboattours.com>
+      - key: SMTP_HOST
+        sync: false
+      - key: SMTP_PORT
+        value: "587"
+      - key: SMTP_SECURE
+        value: "false"
+      - key: SMTP_USER
+        sync: false
+      - key: SMTP_PASS
+        sync: false
+      # ── Admin panel ──
+      - key: ADMIN_USERNAME
+        sync: false
+      - key: ADMIN_PASSWORD
+        sync: false
+      # Render generates a strong secret automatically.
+      - key: JWT_SECRET
+        generateValue: true
