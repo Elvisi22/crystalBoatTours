@@ -6,6 +6,8 @@ import { ToursModule } from './tours/tours.module';
 import { BookingsModule } from './bookings/bookings.module';
 import { ContactModule } from './contact/contact.module';
 import { NewsletterModule } from './newsletter/newsletter.module';
+import { AuthModule } from './auth/auth.module';
+import { AdminModule } from './admin/admin.module';
 
 @Module({
   imports: [
@@ -19,6 +21,8 @@ import { NewsletterModule } from './newsletter/newsletter.module';
     BookingsModule,
     ContactModule,
     NewsletterModule,
+    AuthModule,
+    AdminModule,
   ],
 })
 export class AppModule {}
